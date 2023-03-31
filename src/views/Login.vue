@@ -43,7 +43,7 @@ export default {
           this.error_text = error.response.statusText
         }
         else {
-          this.error_text = "Username or password not correct"
+          this.error_text = "Username or password incorrect"
         }
       }
     },

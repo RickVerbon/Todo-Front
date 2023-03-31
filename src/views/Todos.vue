@@ -1,25 +1,33 @@
-
-
 <template>
-  <body>
-    <div>
-      <h1>To-do List</h1>
-      <div>
-        <form @submit.prevent="addTodo">
-          <input type="text" v-model="todo" placeholder="Enter a ToDo..."  />
-          <button>+</button>
-        </form>
-      </div>
-      <div>
-        <div v-for="todo in todos" :key="todo.id">
-          <span>{{ todo.todo_text }} <button type="submit" @click="removeTodo(todo.id)">  X</button></span> 
-        </div>
-      </div>
-    </div>
-  </body>
+  <div class="container">
+
+  <!--  HEADER  -->
+    <header class="text-center text-light my-4">
+      <h1 class="mb-4">Todo List</h1>
+    
+    </header>
+    
+  <!--  LIST  -->
+    <ul class="list-group todos mx-auto text-light">
+      <li v-for="todo in todos" :key="todo.id" class="list-group-item d-flex justify-content-between align-items-center">
+        <span :class="{'completed': todo.completed}" @click="markAsDone(todo.id)">{{todo.todo_text}}</span>
+          <i @click="removeTodo(todo.id)" class="far fa-trash-alt delete"></i>
+      </li>
+    </ul>
+    
+  <!--  FORM  -->
+    <form @submit.prevent="addTodo" class="add text-center my-4">
+      <label for="add" class="add text-light">Add a new todo:</label>
+      <input type="text" v-model="todo" class="form-control m-auto" name="add" id="add">
+    </form>
+    
+  </div>
 
 </template>
 
+<style>
+
+</style>
 
 <script>
 import axios from 'axios';
@@ -30,7 +38,9 @@ export default {
     return {
       todos: [],
       todo: "",
-      url_api: "http://localhost:8000/api/"
+      url_api: "http://localhost:8000/api/",
+      completed: false,
+      current_todo: {}
     }
   },
   computed: {
@@ -46,7 +56,8 @@ export default {
       }
       try {
         const token = localStorage.getItem('todo_access_token');
-        const response = await axios.get(this.url_api, {headers: {Authorization: `Token ${token}` }
+        const response = await axios.get(this.url_api, 
+          {headers: {Authorization: `Token ${token}` }
       });
       this.todos = response.data
       } catch (error) {
@@ -88,9 +99,47 @@ export default {
         });
         this.getData();
       } catch (error) {
-        console.log(error)
+      }
+    },
+
+    async markAsDone(todoId) {
+      if(!this.isAuthenticated) {
+        router.push({name: "login"})
+        return
+      }
+      await this.getTodoDetail(todoId)
+
+      try {
+        this.completed = !this.completed
+        const token = localStorage.getItem('todo_access_token');
+        const response = await axios.put(`${this.getTodoId(todoId)}update`, {
+          todo_text: this.current_todo.todo_text,
+          completed: this.completed
+        }, {
+          headers: { Authorization: `Token ${token}` }
+        });
+        this.getData()
+       } catch (error) {
+          console.error(error);
+       }
+    },
+
+    async getTodoDetail(todoId) {
+      if(!this.isAuthenticated) {
+        router.push({name: "login"})
+      return
+      }
+      try {
+        const token = localStorage.getItem('todo_access_token');
+        const response = await axios.get(`${this.getTodoId(todoId)}detail`, {
+            headers: { Authorization: `Token ${token}` }    
+        });
+        this.current_todo = await response.data
+      } catch(error) {
+        console.error(error)
       }
     }
+
   },
   created() {
     this.getData();
