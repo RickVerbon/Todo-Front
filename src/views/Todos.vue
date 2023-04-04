@@ -1,4 +1,5 @@
 <template>
+  <p><a href="/logout">Logout</a></p>
   <div class="container">
 
   <!--  HEADER  -->

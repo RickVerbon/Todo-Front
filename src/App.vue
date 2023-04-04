@@ -19,9 +19,14 @@ export default {
   router,
   data() {
     return {
-      user: null
+      isAuthenticated: false,
+    };
+  },
+  methods: {
+    checkAuthentication() {
+      return localStorage.getItem('todo_access_token') !== null;
     }
-  }
+  },
 }
 </script>
 

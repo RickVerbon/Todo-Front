@@ -1,8 +1,8 @@
 <template>
+  <button @click="logout">Logout</button>
 </template>
   
   <script>
-  import axios from 'axios';
   import router from '../router/router.js'
   export default {
     data() {
@@ -13,22 +13,13 @@
       };
     },
     methods: {
-      async login() {
+      async logout() {
         try {
-          const response = await axios.post('http://localhost:8000/api-token-auth/', {
-            username: this.username,
-            password: this.password,
-          });
-          localStorage.setItem('todo_access_token', response.data.token);
+          localStorage.removeItem('todo_access_token');
           // Need a redirect to another page.
-          router.push({name: "todos"})
+          router.push({name: "login"})
         } catch (error) {
-          if(error.response.status !== 400) {
-            this.error_text = error.response.statusText
-          }
-          else {
-            this.error_text = "Username or password not correct"
-          }
+          console.log(error)
         }
       },
     },
