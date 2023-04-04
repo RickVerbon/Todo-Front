@@ -18,7 +18,6 @@
 import axios from 'axios';
 import router from '../router/router.js'
 export default {
-  props: ["user"],
   data() {
     return {
       username: '',
