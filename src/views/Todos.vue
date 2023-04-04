@@ -22,7 +22,6 @@
     </form>
     
   </div>
-
 </template>
 
 <style>
@@ -33,7 +32,6 @@
 import axios from 'axios';
 import router from '../router/router.js'
 export default {
-  props: ["user"],
   data() {
     return {
       todos: [],
@@ -83,7 +81,6 @@ export default {
     getTodoId(todoId) {
       const url = `${this.url_api}${todoId}/`
       return url
-      
     },
 
     async removeTodo(todoId) {
@@ -94,7 +91,7 @@ export default {
 
       try {
         const token = localStorage.getItem('todo_access_token');
-        const response = await axios.delete(`${this.getTodoId(todoId)}delete`, {
+        const response = await axios.delete(`${this.getTodoId(todoId)}`, {
           headers: {Authorization: `Token ${token}`}
         });
         this.getData();
@@ -112,17 +109,17 @@ export default {
       try {
         this.completed = !this.completed
         const token = localStorage.getItem('todo_access_token');
-        const response = await axios.put(`${this.getTodoId(todoId)}update`, {
+        const response = await axios.put(`${this.getTodoId(todoId)}`, {
           todo_text: this.current_todo.todo_text,
           completed: this.completed
         }, {
           headers: { Authorization: `Token ${token}` }
         });
         this.getData()
-       } catch (error) {
+      } catch (error) {
           console.error(error);
-       }
-    },
+      }
+},
 
     async getTodoDetail(todoId) {
       if(!this.isAuthenticated) {
@@ -131,12 +128,14 @@ export default {
       }
       try {
         const token = localStorage.getItem('todo_access_token');
-        const response = await axios.get(`${this.getTodoId(todoId)}detail`, {
+
+        const response = await axios.get(`${this.getTodoId(todoId)}`, {
             headers: { Authorization: `Token ${token}` }    
         });
         this.current_todo = await response.data
+
       } catch(error) {
-        console.error(error)
+        
       }
     }
 

@@ -34,9 +34,6 @@ export default {
           password: this.password,
         });
         localStorage.setItem('todo_access_token', response.data.token);
-        console.log(this.username)
-        this.$parent.user = this.username
-        console.log(this.$parent.user)
         router.push({name: "todos"})
       } catch (error) {
         if(error.response.status !== 400) {
